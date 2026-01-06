@@ -168,7 +168,7 @@ def CONVERT_TIF_TO_PNG(FILE: str, auto: bool = False, min_elev: float | None = N
         min_elev = np.nanmin(data)
         max_elev = np.nanmax(data)
     else:
-        # manual: wenn nicht gesetzt, fallback auf auto (oder du setzt harte defaults)
+        # manual
         if min_elev is None:
             min_elev = np.nanmin(data)
         if max_elev is None:
