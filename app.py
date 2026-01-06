@@ -94,12 +94,14 @@ TILES = LOAD_TILELIST()
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.northing == None or args.easting == None:
+    if args.northing == None and args.easting == None:
         print("Test download...")
     if args.northing == None:
         args.northing = DEFAULT_NORTHING
+        print("No argument for northing, setting default: ", DEFAULT_NORTHING)
     if args.easting == None:
         args.easting = DEFAULT_EASTING
+        print("No argument for easting, setting default: ", DEFAULT_EASTING)
 
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
