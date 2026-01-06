@@ -47,9 +47,7 @@ def parse_args():
     return parser.parse_args()
 
 def CHECK_FILE(FILE:str):
-    if os.path.isfile(FILE):
-        return (True)
-    return (False)
+    return os.path.isfile(FILE)
 
 # Define Download Functionality
 def DOWNLOAD_FILE(OBJECT_NAME: str, FILE_NAME: str):
