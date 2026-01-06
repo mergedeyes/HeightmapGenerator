@@ -131,7 +131,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     if args.lat is not None and args.lon is not None:
-    args.northing, args.easting = LATLONG_TO_TILE(args.lat, args.lon)
+        args.northing, args.easting = LATLONG_TO_TILE(args.lat, args.lon)
 
     try:
         DOWNLOAD_TILE(args.northing, args.easting)
