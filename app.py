@@ -95,9 +95,7 @@ TILES = LOAD_TILELIST()
 
 if __name__ == "__main__":
     args = parse_args()
-    if args.northing == None and args.easting == None:
-        print("Test download...")
-
+    
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
             print(
