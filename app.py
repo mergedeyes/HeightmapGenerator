@@ -9,6 +9,7 @@ from botocore import UNSIGNED
 from botocore.config import Config
 from botocore.exceptions import ClientError
 import argparse
+import math
 
 # Default paths, names and urls
 TIF_LOCATION = "data/tif/"
@@ -97,6 +98,22 @@ if not os.path.isfile(TILELIST_FILE):
         print(f"'{TILELIST_FILE}' successfully downloaded.")
 
 TILES = LOAD_TILELIST()
+
+
+def LATLONG_TO_TILE(LAT: float, LON: float) -> tuple[str, str]:
+    # Latitude
+    if LAT >= 0:
+        NORTHING = f"N{int(math.floor(LAT)):02d}_00"
+    else:
+        NORTHING = f"S{int(abs(math.floor(LAT))):02d}_00"
+
+    # Longitude
+    if LON >= 0:
+        EASTING = f"E{int(math.floor(LON)):03d}_00"
+    else:
+        EASTING = f"W{int(abs(math.floor(LON))):03d}_00"
+
+    return NORTHING, EASTING
 
 if __name__ == "__main__":
     args = parse_args()
