@@ -78,9 +78,10 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
 
     print("S3 key:", S3_FILE_PATH)
     print("Local file path:", LOCAL_FILE_PATH)
-    if TILE_AVAILABLE(S3_BASE_STR):
-        return DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
-    return (False)
+    if not TILE_AVAILABLE(S3_BASE_STR):
+        print("Tile not available in tileList:", S3_BASE_STR)
+        return False
+    return DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
 
 # Make sure the tile list file exists
 if not os.path.isfile(TILELIST_FILE):
