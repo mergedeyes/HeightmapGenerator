@@ -97,10 +97,3 @@ if __name__ == "__main__":
             )
     except ClientError as e:
         print("Download failed:", e)
-
-print("Test download...")
-try:
-    if DOWNLOAD_TILE(DEFAULT_NORTHING, DEFAULT_EASTING):
-        print(f"File {os.path.join(TIF_LOCATION, f"{DEFAULT_NORTHING}_{DEFAULT_EASTING}.tif")} successfully downloaded.")
-except ClientError as e:
-    print("Download failed:", e)
