@@ -76,8 +76,8 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     LOCAL_FILE_NAME=f"{NORTHING}_{EASTING}.tif"
     LOCAL_FILE_PATH = os.path.join(TIF_LOCATION, LOCAL_FILE_NAME)
 
-    print("S3 key: ", S3_FILE_PATH)
-    print("Local file path: ", LOCAL_FILE_PATH)
+    print("S3 key:", S3_FILE_PATH)
+    print("Local file path:", LOCAL_FILE_PATH)
     if TILE_AVAILABLE(S3_BASE_STR):
         return DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
     return (False)
@@ -96,10 +96,10 @@ if __name__ == "__main__":
         print("Test download...")
     if args.northing == None:
         args.northing = DEFAULT_NORTHING
-        print("No argument for northing, setting default: ", DEFAULT_NORTHING)
+        print("No argument for northing, setting default:", DEFAULT_NORTHING)
     if args.easting == None:
         args.easting = DEFAULT_EASTING
-        print("No argument for easting, setting default: ", DEFAULT_EASTING)
+        print("No argument for easting, setting default:", DEFAULT_EASTING)
 
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
