@@ -27,6 +27,24 @@ os.makedirs(os.path.dirname(TILELIST_FILE) or ".", exist_ok=True)
 # Define AWS client
 s3 = aws.client("s3", config=Config(signature_version=UNSIGNED))
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Download Copernicus DEM tile"
+    )
+
+    parser.add_argument(
+        "--northing",
+        required=True,
+        help="Northing tile, e.g. N47_00"
+    )
+    parser.add_argument(
+        "--easting",
+        required=True,
+        help="Easting tile, e.g. E009_00"
+    )
+
+    return parser.parse_args()
+
 def CHECK_FILE(FILE:str):
     if (os.path.isfile(FILE)):
         return (True)
@@ -61,6 +79,21 @@ if not os.path.isfile(TILELIST_FILE):
     print(f"Tile list file '{TILELIST_FILE}' not found. Downloading it now.")
     if (DOWNLOAD_FILE('tileList.txt', TILELIST_FILE)):
         print(f"'{TILELIST_FILE}' successfully downloaded.")
+
+if __name__ == "__main__":
+    args = parse_args()
+
+    try:
+        if DOWNLOAD_TILE(args.northing, args.easting):
+            if (args.northing == None):
+                args.northing = DEFAULT_NORTHING
+            if (args.easting == None):
+                args.easting = DEFAULT_EASTING
+            print(
+                f"File {os.path.join(TIF_LOCATION, f'{args.northing}_{args.easting}.tif')} successfully downloaded."
+            )
+    except ClientError as e:
+        print("Download failed:", e)
 
 print("Test download...")
 try:
