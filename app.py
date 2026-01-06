@@ -47,7 +47,7 @@ def parse_args():
     return parser.parse_args()
 
 def CHECK_FILE(FILE:str):
-    if (os.path.isfile(FILE)):
+    if os.path.isfile(FILE):
         return (True)
     return (False)
 
@@ -62,6 +62,13 @@ def DOWNLOAD_FILE(OBJECT_NAME: str, FILE_NAME: str):
             os.remove(FILE_NAME)
         raise
     return CHECK_FILE(FILE_NAME)
+
+def TILE_AVAILABLE(TILE_NAME:str):
+    with open (TILELIST_FILE, "r") as list:
+        for tile in list:
+            if tile.strip() == TILE_NAME:
+                return True
+    return False
 
 def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     # Define file and path names
@@ -78,7 +85,7 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
 # Make sure the tile list file exists
 if not os.path.isfile(TILELIST_FILE):
     print(f"Tile list file '{TILELIST_FILE}' not found. Downloading it now.")
-    if (DOWNLOAD_FILE('tileList.txt', TILELIST_FILE)):
+    if DOWNLOAD_FILE('tileList.txt', TILELIST_FILE):
         print(f"'{TILELIST_FILE}' successfully downloaded.")
 
 if __name__ == "__main__":
@@ -86,11 +93,11 @@ if __name__ == "__main__":
 
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
-            if (args.northing == None or args.easting == None):
+            if args.northing == None or args.easting == None:
                 print("Test download...")
-            if (args.northing == None):
+            if args.northing == None:
                 args.northing = DEFAULT_NORTHING
-            if (args.easting == None):
+            if args.easting == None:
                 args.easting = DEFAULT_EASTING
             print(
                 f"File {os.path.join(TIF_LOCATION, f'{args.northing}_{args.easting}.tif')} successfully downloaded."
