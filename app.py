@@ -35,12 +35,12 @@ def parse_args():
 
     parser.add_argument(
         "--northing",
-        required=True,
+        required=False,
         help="Northing tile, e.g. N47_00"
     )
     parser.add_argument(
         "--easting",
-        required=True,
+        required=False,
         help="Easting tile, e.g. E009_00"
     )
 
@@ -67,8 +67,6 @@ def LOAD_TILELIST() -> set[str]:
     with open(TILELIST_FILE, "r") as f:
         return {line.strip() for line in f}
 
-TILES = LOAD_TILELIST()
-
 def TILE_AVAILABLE(tile_name: str) -> bool:
     return tile_name in TILES
 
@@ -84,6 +82,7 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     print("Local file path: ", LOCAL_FILE_PATH)
     if TILE_AVAILABLE(S3_BASE_STR):
         return DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
+    return (False)
 
 # Make sure the tile list file exists
 if not os.path.isfile(TILELIST_FILE):
@@ -91,17 +90,19 @@ if not os.path.isfile(TILELIST_FILE):
     if DOWNLOAD_FILE('tileList.txt', TILELIST_FILE):
         print(f"'{TILELIST_FILE}' successfully downloaded.")
 
+TILES = LOAD_TILELIST()
+
 if __name__ == "__main__":
     args = parse_args()
+    if args.northing == None or args.easting == None:
+        print("Test download...")
+    if args.northing == None:
+        args.northing = DEFAULT_NORTHING
+    if args.easting == None:
+        args.easting = DEFAULT_EASTING
 
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
-            if args.northing == None or args.easting == None:
-                print("Test download...")
-            if args.northing == None:
-                args.northing = DEFAULT_NORTHING
-            if args.easting == None:
-                args.easting = DEFAULT_EASTING
             print(
                 f"File {os.path.join(TIF_LOCATION, f'{args.northing}_{args.easting}.tif')} successfully downloaded."
             )
