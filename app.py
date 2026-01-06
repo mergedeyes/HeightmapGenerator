@@ -8,6 +8,7 @@ import boto3 as aws
 from botocore import UNSIGNED
 from botocore.config import Config
 from botocore.exceptions import ClientError
+import argparse
 
 # Default paths, names and urls
 TIF_LOCATION = "data/tif/"
@@ -85,6 +86,8 @@ if __name__ == "__main__":
 
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
+            if (args.northing == None or args.easting == None):
+                print("Test download...")
             if (args.northing == None):
                 args.northing = DEFAULT_NORTHING
             if (args.easting == None):
