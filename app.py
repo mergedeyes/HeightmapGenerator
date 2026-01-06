@@ -60,6 +60,7 @@ def DOWNLOAD_FILE(OBJECT_NAME: str, FILE_NAME: str):
     try:
         with open(FILE_NAME, "wb") as f:
             s3.download_fileobj(S3_BUCKET_BASE, OBJECT_NAME, f)
+        print(f"File {FILE_NAME} successfully downloaded.")
     except ClientError:
         # Delete file if download fails
         if os.path.exists(FILE_NAME):
@@ -101,9 +102,6 @@ if __name__ == "__main__":
     args = parse_args()
 
     try:
-        if DOWNLOAD_TILE(args.northing, args.easting):
-            print(
-                f"File {os.path.join(TIF_LOCATION, f'{args.northing}_{args.easting}.tif')} successfully downloaded."
-            )
+        DOWNLOAD_TILE(args.northing, args.easting)
     except ClientError as e:
         print("Download failed:", e)
