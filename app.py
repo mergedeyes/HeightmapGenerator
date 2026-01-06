@@ -53,6 +53,10 @@ def CHECK_FILE(FILE:str):
 
 # Define Download Functionality
 def DOWNLOAD_FILE(OBJECT_NAME: str, FILE_NAME: str):
+    if CHECK_FILE(FILE_NAME):
+        print(f"File {FILE_NAME} already exists.")
+        return True
+    
     try:
         with open(FILE_NAME, "wb") as f:
             s3.download_fileobj(S3_BUCKET_BASE, OBJECT_NAME, f)
@@ -95,7 +99,7 @@ TILES = LOAD_TILELIST()
 
 if __name__ == "__main__":
     args = parse_args()
-    
+
     try:
         if DOWNLOAD_TILE(args.northing, args.easting):
             print(
