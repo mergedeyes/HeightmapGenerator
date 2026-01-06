@@ -10,6 +10,7 @@ venv/
 # Data (DEM / Heightmaps)
 data/tif/
 data/heightmaps/
+*.tif
 
 # Optional: downloaded metadata
 data/tileList.txt
