@@ -10,6 +10,9 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 import argparse
 import math
+import rasterio
+import numpy as np
+from PIL import Image
 
 # Default paths, names and urls
 TIF_LOCATION = "data/tif/"
@@ -100,8 +103,9 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     print("Local file path:", LOCAL_FILE_PATH)
     if not TILE_AVAILABLE(S3_BASE_STR):
         print("Tile not available in tileList:", S3_BASE_STR)
-        return False
-    return DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
+        return None
+    ok = DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
+    return LOCAL_FILE_PATH if ok else None
 
 # Make sure the tile list file exists
 if not os.path.isfile(TILELIST_FILE):
@@ -127,6 +131,29 @@ def LATLONG_TO_TILE(LAT: float, LON: float) -> tuple[str, str]:
 
     return NORTHING, EASTING
 
+def CONVERT_TIF_TO_PNG(FILE:str):
+    PNG_FILE = os.path.join(HEIGHTMAP_LOCATION, os.path.splitext(os.path.basename(FILE))[0] + ".png")
+    with rasterio.open(FILE) as src:
+        data = src.read(1).astype(np.float32)
+
+        # NoData maskieren
+        if src.nodata is not None:
+            data[data == src.nodata] = np.nan
+
+    min_elev = np.nanmin(data)
+    max_elev = np.nanmax(data)
+    rng = max_elev - min_elev
+    if not np.isfinite(rng) or rng == 0:
+        raise ValueError("Invalid elevation range (nodata/flat tile).")
+
+    # Clamp + normalize → 16-bit
+    data = np.clip(data, min_elev, max_elev)
+    norm = (data - min_elev) / rng
+    img_16 = (norm * 65535).astype(np.uint16)
+
+    Image.fromarray(img_16, mode="I;16").save(PNG_FILE)
+    return PNG_FILE
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -134,6 +161,10 @@ if __name__ == "__main__":
         args.northing, args.easting = LATLONG_TO_TILE(args.lat, args.lon)
 
     try:
-        DOWNLOAD_TILE(args.northing, args.easting)
+        local_tif = DOWNLOAD_TILE(args.northing, args.easting)
+        if local_tif:
+            png = CONVERT_TIF_TO_PNG(local_tif)
+            print("Heightmap:", png)
+
     except ClientError as e:
         print("Download failed:", e)
