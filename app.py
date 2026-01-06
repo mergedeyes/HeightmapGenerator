@@ -200,4 +200,4 @@ if __name__ == "__main__":
             print("Heightmap:", png)
 
     except ClientError as e:
-        print("Download failed:", e)
+        print("Error:", e)
