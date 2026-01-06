@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtualenv
+.venv/
+venv/
+
+# Data (DEM / Heightmaps)
+data/tif/
+data/heightmaps/
+
+# Optional: downloaded metadata
+data/tileList.txt
+
+# OS
+.DS_Store
+Thumbs.db
