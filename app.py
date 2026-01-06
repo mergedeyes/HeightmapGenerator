@@ -46,6 +46,18 @@ def parse_args():
         default=DEFAULT_EASTING,
         help="Easting tile, e.g. E009_00"
     )
+    parser.add_argument(
+        "--lat", 
+        type=float,
+        required=False,
+        help="Latitude, e.g. 47.18"
+        )
+    parser.add_argument(
+        "--lon", 
+        type=float,
+        required=False,
+        help="Longitude, e.g. 9.42"
+        )
 
     return parser.parse_args()
 
