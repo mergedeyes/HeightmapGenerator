@@ -126,15 +126,6 @@ def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     ok = DOWNLOAD_FILE(S3_FILE_PATH, LOCAL_FILE_PATH)
     return LOCAL_FILE_PATH if ok else None
 
-# Make sure the tile list file exists
-if not os.path.isfile(TILELIST_FILE):
-    print(f"Tile list file '{TILELIST_FILE}' not found. Downloading it now.")
-    if DOWNLOAD_FILE('tileList.txt', TILELIST_FILE):
-        print(f"'{TILELIST_FILE}' successfully downloaded.")
-
-TILES = LOAD_TILELIST()
-
-
 def LATLONG_TO_TILE(LAT: float, LON: float) -> tuple[str, str]:
     # Latitude
     if LAT >= 0:
@@ -189,6 +180,14 @@ def CONVERT_TIF_TO_PNG(FILE: str, auto: bool = False, min_elev: float | None = N
 
 if __name__ == "__main__":
     args = parse_args()
+
+    # Make sure the tile list file exists
+    if not os.path.isfile(TILELIST_FILE):
+        print(f"Tile list file '{TILELIST_FILE}' not found. Downloading it now.")
+        if DOWNLOAD_FILE('tileList.txt', TILELIST_FILE):
+            print(f"'{TILELIST_FILE}' successfully downloaded.")
+
+    TILES = LOAD_TILELIST()
 
     if args.lat is not None and args.lon is not None:
         args.northing, args.easting = LATLONG_TO_TILE(args.lat, args.lon)
