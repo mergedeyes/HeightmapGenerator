@@ -61,6 +61,25 @@ def parse_args():
         required=False,
         help="Longitude, e.g. 9.42"
         )
+    parser.add_argument(
+    "--auto",
+    action="store_true",
+    help="Auto exposure: lowest elevation -> black, highest -> white"
+    )
+    parser.add_argument(
+        "--min",
+        dest="min_elev",
+        type=float,
+        default=None,
+        help="Manual minimum elevation (meters). Ignored if --auto."
+    )
+    parser.add_argument(
+        "--max",
+        dest="max_elev",
+        type=float,
+        default=None,
+        help="Manual maximum elevation (meters). Ignored if --auto."
+    )
 
     return parser.parse_args()
 
@@ -131,8 +150,12 @@ def LATLONG_TO_TILE(LAT: float, LON: float) -> tuple[str, str]:
 
     return NORTHING, EASTING
 
-def CONVERT_TIF_TO_PNG(FILE:str):
-    PNG_FILE = os.path.join(HEIGHTMAP_LOCATION, os.path.splitext(os.path.basename(FILE))[0] + ".png")
+def CONVERT_TIF_TO_PNG(FILE: str, auto: bool = False, min_elev: float | None = None, max_elev: float | None = None):
+    PNG_FILE = os.path.join(
+        HEIGHTMAP_LOCATION,
+        os.path.splitext(os.path.basename(FILE))[0] + ".png"
+    )
+
     with rasterio.open(FILE) as src:
         data = src.read(1).astype(np.float32)
 
@@ -140,18 +163,28 @@ def CONVERT_TIF_TO_PNG(FILE:str):
         if src.nodata is not None:
             data[data == src.nodata] = np.nan
 
-    min_elev = np.nanmin(data)
-    max_elev = np.nanmax(data)
+    # --- exposure ---
+    if auto:
+        min_elev = np.nanmin(data)
+        max_elev = np.nanmax(data)
+    else:
+        # manual: wenn nicht gesetzt, fallback auf auto (oder du setzt harte defaults)
+        if min_elev is None:
+            min_elev = np.nanmin(data)
+        if max_elev is None:
+            max_elev = np.nanmax(data)
+
     rng = max_elev - min_elev
-    if not np.isfinite(rng) or rng == 0:
+    if not np.isfinite(rng) or rng <= 0:
         raise ValueError("Invalid elevation range (nodata/flat tile).")
 
-    # Clamp + normalize → 16-bit
+    # clamp + normalize -> 16-bit
     data = np.clip(data, min_elev, max_elev)
     norm = (data - min_elev) / rng
     img_16 = (norm * 65535).astype(np.uint16)
 
     Image.fromarray(img_16, mode="I;16").save(PNG_FILE)
+    print("Saved PNG:", PNG_FILE, f"(min={min_elev:.2f}, max={max_elev:.2f}, auto={auto})")
     return PNG_FILE
 
 if __name__ == "__main__":
@@ -163,7 +196,7 @@ if __name__ == "__main__":
     try:
         local_tif = DOWNLOAD_TILE(args.northing, args.easting)
         if local_tif:
-            png = CONVERT_TIF_TO_PNG(local_tif)
+            png=CONVERT_TIF_TO_PNG(local_tif, auto=args.auto, min_elev=args.min_elev, max_elev=args.max_elev)
             print("Heightmap:", png)
 
     except ClientError as e:
