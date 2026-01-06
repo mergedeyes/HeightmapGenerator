@@ -184,8 +184,7 @@ if __name__ == "__main__":
     # Make sure the tile list file exists
     if not os.path.isfile(TILELIST_FILE):
         print(f"Tile list file '{TILELIST_FILE}' not found. Downloading it now.")
-        if DOWNLOAD_FILE('tileList.txt', TILELIST_FILE):
-            print(f"'{TILELIST_FILE}' successfully downloaded.")
+        DOWNLOAD_FILE('tileList.txt', TILELIST_FILE)
 
     TILES = LOAD_TILELIST()
 
