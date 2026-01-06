@@ -121,7 +121,6 @@ Ein kleines Python-Tool zum Herunterladen von **Copernicus DEM (GLO-30)** Höhen
 Installation:
 
     pip install boto3 rasterio numpy pillow
-GNU GENERAL PUBLIC LICENSE
 Arch Linux (empfohlen):
 
     sudo pacman -S python-boto3 python-rasterio python-numpy python-pillow gdal
