@@ -63,12 +63,14 @@ def DOWNLOAD_FILE(OBJECT_NAME: str, FILE_NAME: str):
         raise
     return CHECK_FILE(FILE_NAME)
 
-def TILE_AVAILABLE(TILE_NAME:str):
-    with open (TILELIST_FILE, "r") as list:
-        for tile in list:
-            if tile.strip() == TILE_NAME:
-                return True
-    return False
+def LOAD_TILELIST() -> set[str]:
+    with open(TILELIST_FILE, "r") as f:
+        return {line.strip() for line in f}
+
+TILES = LOAD_TILELIST()
+
+def TILE_AVAILABLE(tile_name: str) -> bool:
+    return tile_name in TILES
 
 def DOWNLOAD_TILE(NORTHING:str, EASTING:str):
     # Define file and path names
