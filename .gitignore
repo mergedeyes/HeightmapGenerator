@@ -18,3 +18,6 @@ data/tileList.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Tests
+tests/
